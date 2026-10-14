@@ -11,7 +11,7 @@
     "test": "vitest run",
     "typecheck": "tsc -b --noEmit",
     "build:embed": "node scripts/build-embed.mjs",
-    "build:pages": "tsc -b && BASE_PATH=/proyectoclaude/ VITE_SITE_URL=https://caarlosverde.github.io/proyectoclaude node scripts/prerender.mjs",
+    "build:pages": "tsc -b && BASE_PATH=/facturo/ VITE_SITE_URL=https://caarlosverde.github.io/facturo node scripts/prerender.mjs",
     "build:spa": "tsc -b && vite build"
   },
   "dependencies": {

@@ -2,7 +2,7 @@ name: Publicar en GitHub Pages
 
 on:
   push:
-    branches: ["claude/wonderful-brahmagupta-6nmjwb", "main"]
+    branches: ["main"]
   workflow_dispatch:
 
 permissions:

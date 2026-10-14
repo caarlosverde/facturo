@@ -1,15 +1,23 @@
 # Facturo
 
-**Generador de facturas y presupuestos para autónomos y freelancers en España.**
-IVA, IRPF y recargo de equivalencia automáticos, PDF profesional, control de cobros e informe trimestral (modelos 303 y 130). Funciona 100 % en el navegador: sin registro, sin servidor y sin coste de infraestructura.
+**Generador de facturas y presupuestos para autónomos en España**, con IVA, IRPF y recargo de equivalencia automáticos, PDF profesional, control de cobros e informe trimestral (modelos 303 y 130). Funciona 100 % en el navegador: sin registro y sin servidor.
 
-## Por qué este proyecto
+**▶ Demo en vivo:** https://caarlosverde.github.io/facturo/
 
-- **Mercado enorme y recurrente:** más de 3 millones de autónomos en España tienen que emitir facturas cada mes, y muchos todavía usan Word o Excel.
-- **Mucha búsqueda orgánica:** consultas como «generador de facturas gratis», «plantilla factura autónomo» o «calcular IRPF factura» tienen un volumen alto y estable todo el año. La landing y la calculadora gratuita están pensadas para captar ese tráfico (SEO + JSON-LD).
-- **Momento oportuno:** la normativa de facturación (VeriFactu, factura electrónica B2B) está empujando a los autónomos a dejar las plantillas y pasar a software.
-- **Modelo freemium probado:** plan gratuito útil de verdad (5 documentos/mes) con una marca de agua que hace de canal de difusión en cada factura enviada, y un plan Pro a 6,99 €/mes (59 €/año).
-- **Coste marginal casi cero:** es una SPA estática; se aloja gratis en Vercel, Netlify o Cloudflare Pages.
+![Facturo](public/og.png)
+
+## Aspectos técnicos destacados
+
+- **Prerender (SSG) propio con React SSR**: `scripts/prerender.mjs` compila un bundle de servidor (`src/entry-server.tsx`) y genera cada página pública como HTML estático, con su `<title>`, URL canónica, Open Graph y JSON-LD (schema.org), además de `sitemap.xml` y `robots.txt`. La app privada (`/app`) es una SPA con `noindex`.
+- **Lógica fiscal pura y testeada** (`src/lib/calc.ts`): IVA por línea, IRPF, recargo de equivalencia, cálculo inverso («quiero cobrar X, ¿cuánto facturo?») y validación de NIF/NIE/CIF, con tests en Vitest que se ejecutan en CI antes de cada despliegue.
+- **PDF vectorial en el cliente** con jsPDF: texto seleccionable, multipágina y 3 plantillas. Las dependencias que no se usan (html2canvas, dompurify, canvg) se sustituyen por un módulo vacío en Vite para reducir el bundle.
+- **Estado centralizado** (`src/store/store.ts`) con persistencia en `localStorage`, preparado para cambiar a un backend (p. ej. Supabase) sin tocar la UI.
+- **CI/CD con GitHub Actions**: tests → build con prerender → publicación en GitHub Pages en cada push.
+- **Build embebible**: `npm run build:embed` genera la app entera en un solo HTML (útil para vistas previas e iframes).
+
+## Stack
+
+React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router · jsPDF · Vitest · GitHub Actions
 
 ## Funciones
 
@@ -24,11 +32,7 @@ IVA, IRPF y recargo de equivalencia automáticos, PDF profesional, control de co
 | — | Informe trimestral 303/130 |
 | — | Exportación a Excel/CSV para la gestoría |
 
-Además: presupuestos convertibles en factura con un clic, duplicar documentos, numeración por series, validación de NIF/NIE/CIF, copia de seguridad JSON, calculadora pública de IVA/IRPF (también inversa: «quiero cobrar X, ¿cuánto facturo?») y diseño adaptado a móvil.
-
-## Stack
-
-React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router · jsPDF · Vitest. Sin backend: los datos se guardan en `localStorage`. El PDF se genera en el propio navegador con jsPDF (vectorial, texto seleccionable, multipágina) y funciona igual en móvil y ordenador.
+Además: presupuestos convertibles en factura con un clic, numeración por series, copia de seguridad JSON, calculadora pública de IVA/IRPF y diseño adaptado a móvil.
 
 ## Puesta en marcha
 
@@ -36,8 +40,7 @@ React 19 · TypeScript · Vite · Tailwind CSS v4 · React Router · jsPDF · Vi
 npm install
 npm run dev        # http://localhost:5173
 npm test           # tests de cálculo fiscal y validaciones
-npm run build      # genera dist/ listo para desplegar
-npm run build:embed  # dist-embed/facturo.html: la app entera en un solo archivo (vistas previas, iframes)
+npm run build      # genera dist/ (prerenderizado) listo para desplegar
 ```
 
 ## Monetización: conectar Stripe
@@ -83,7 +86,7 @@ src/
   pages/app/    panel, documentos, editor, clientes, ajustes
 ```
 
-## Ideas de crecimiento
+## Próximos pasos
 
 - Páginas SEO por profesión («factura para diseñadores», «factura para fotógrafos»…) reutilizando la calculadora.
 - Envío de facturas por email y recordatorios automáticos de impago (requiere backend).
